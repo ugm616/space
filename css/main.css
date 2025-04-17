@@ -138,3 +138,50 @@ canvas {
   background: linear-gradient(45deg, #ff5a5a, #ff7a5a);
   box-shadow: 0 0 15px rgba(255, 100, 100, 0.4);
 }
+
+.text-input-overlay {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  width: 80%;
+  max-width: 500px;
+}
+
+.text-input-container {
+  background: var(--ui-bg);
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid var(--ui-border);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+#cosmicText {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 18px;
+  background: rgba(20, 20, 40, 0.4);
+  border: 1px solid var(--accent-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+#cosmicText:focus {
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.text-hint {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(220, 220, 255, 0.7);
+  margin: 10px 0 0 0;
+}
+
+.tool-btn[data-tool="text"].active {
+  background: linear-gradient(45deg, #6f9fff, #c96fff);
+}

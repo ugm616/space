@@ -7,13 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const particleSystem = new ParticleSystem(canvasManager.ctx);
   const painter = new CosmicPainter(canvasManager, particleSystem);
   const flowSystem = new CosmicFlowSystem(canvasManager, particleSystem);
+  const textRenderer = new CosmicTextRenderer(canvasManager, particleSystem);
   
   // UI controls
   const uiControls = new UIControls({
     audioEngine,
     constellationSystem,
     painter,
-    flowSystem
+    flowSystem,
+    textRenderer
   });
   
   // Set initial active tool
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
       constellationSystem.disable();
       painter.disable();
       flowSystem.disable();
+      textRenderer.disable();
       
       // Activate selected tool
       btn.classList.add('active');
@@ -53,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
           break;
         case 'flow':
           flowSystem.enable();
+          break;
+        case 'text':
+          textRenderer.enable();
           break;
       }
     });
@@ -69,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       painter.paintings = [];
       flowSystem.flowPoints = [];
       flowSystem.updateFlowField();
+      textRenderer.texts = [];
       
       // Clear storage
       deleteCreation('celestial-harmony');
@@ -112,6 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
       painter.update(deltaTime);
     } else if (activeTool === 'flow') {
       flowSystem.update(deltaTime);
+    } else if (activeTool === 'text') {
+      textRenderer.update(deltaTime);
     }
     
     // Draw everything
@@ -120,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     constellationSystem.draw();
     painter.draw();
     flowSystem.draw();
+    textRenderer.draw();
     
     requestAnimationFrame(animate);
   }
@@ -132,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
     saveCreation('celestial-harmony', {
       constellations: constellationSystem.serialize(),
       paintings: painter.serialize(),
-      flows: flowSystem.serialize()
+      flows: flowSystem.serialize(),
+      texts: textRenderer.serialize()
     });
   }, 30000); // Every 30 seconds
   
@@ -147,6 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (savedCreation.flows) {
       flowSystem.deserialize(savedCreation.flows);
+    }
+    if (savedCreation.texts) {
+      textRenderer.deserialize(savedCreation.texts);
     }
   }
 });

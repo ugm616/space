@@ -4,6 +4,10 @@ class ParticleSystem {
     this.particles = [];
     this.maxParticles = 8000; // Increased from 2000 to 8000
     this.particleGroups = new Map(); // For tracking groups of related particles
+    
+    // Current date timestamp for your records
+    this.createdAt = "2025-04-17 14:20:15";
+    this.userInfo = "ugm616";
   }
   
   createParticle(x, y, options = {}) {
@@ -16,7 +20,7 @@ class ParticleSystem {
       life: 1 + Math.random() * 3,
       decay: 0.01 + Math.random() * 0.03,
       gravity: 0,
-      type: 'default', // default, painter, flow
+      type: 'default', // default, painter, flow, text
       group: null      // Optional group identifier for related particles
     };
     
@@ -117,6 +121,17 @@ class ParticleSystem {
           // Flow particles can interact with each other
           // This could be expanded with more complex behaviors
           break;
+          
+        case 'text':
+          // Text particles should have minimal movement
+          p.velocityX *= 0.95;
+          p.velocityY *= 0.95;
+          
+          // Occasionally add a slight "twinkle" effect
+          if (Math.random() < 0.02) {
+            p.size = p.originalSize * (0.8 + Math.random() * 0.4);
+          }
+          break;
       }
     }
   }
@@ -150,6 +165,23 @@ class ParticleSystem {
           [, r, g, b] = parts;
           a = opacity;
         }
+      } else if (color.startsWith('hsl')) {
+        // Convert HSL to RGB
+        const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+        if (hslMatch) {
+          const [, h, s, l] = hslMatch.map(Number);
+          const rgb = this.hslToRgb(h, s, l);
+          r = rgb.r;
+          g = rgb.g;
+          b = rgb.b;
+          a = opacity;
+        } else {
+          // Default fallback
+          r = 255;
+          g = 255;
+          b = 255;
+          a = opacity;
+        }
       } else {
         // Default fallback
         r = 255;
@@ -163,6 +195,27 @@ class ParticleSystem {
       
       // Draw based on type
       switch (p.type) {
+        case 'text':
+          // Sparkly effect for text particles
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+          this.ctx.fill();
+          
+          // Add a subtle glow to some particles
+          if (Math.random() < 0.2) {
+            this.ctx.shadowBlur = 5;
+            this.ctx.shadowColor = `rgba(${r}, ${g}, ${b}, ${a * 0.7})`;
+            
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, size * 1.2, 0, Math.PI * 2);
+            this.ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a * 0.3})`;
+            this.ctx.fill();
+            
+            this.ctx.shadowBlur = 0;
+          }
+          break;
+          
         case 'painter':
           // Glow effect for painter particles
           const gradient = this.ctx.createRadialGradient(
@@ -198,6 +251,41 @@ class ParticleSystem {
     this.ctx.restore();
   }
   
+  // Helper function to convert HSL to RGB
+  hslToRgb(h, s, l) {
+    h /= 360;
+    s /= 100;
+    l /= 100;
+    
+    let r, g, b;
+    
+    if (s === 0) {
+      r = g = b = l; // achromatic
+    } else {
+      const hue2rgb = (p, q, t) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      };
+      
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    
+    return {
+      r: Math.round(r * 255),
+      g: Math.round(g * 255),
+      b: Math.round(b * 255)
+    };
+  }
+  
   createBurst(x, y, count, options = {}) {
     for (let i = 0; i < count; i++) {
       this.createParticle(x, y, options);
@@ -209,7 +297,7 @@ class ParticleSystem {
     this.particleGroups.clear();
   }
   
-  // New method to remove all particles in a specific group
+  // Remove all particles in a specific group
   clearGroup(groupId) {
     if (this.particleGroups.has(groupId)) {
       // Get all particles in this group
@@ -226,5 +314,15 @@ class ParticleSystem {
       // Remove the group
       this.particleGroups.delete(groupId);
     }
+  }
+  
+  // Get count of particles by type
+  getParticleCountByType(type) {
+    return this.particles.filter(p => p.type === type).length;
+  }
+  
+  // Get total particle count
+  getParticleCount() {
+    return this.particles.length;
   }
 }

@@ -17,20 +17,35 @@
                 <button class="tool-btn active" data-tool="constellation">Constellation</button>
                 <button class="tool-btn" data-tool="painter">Cosmic Paint</button>
                 <button class="tool-btn" data-tool="flow">Nebula Flow</button>
+                <button class="tool-btn" data-tool="text">Cosmic Text</button>
                 <button class="tool-btn clear-btn" data-tool="clear">Clear All</button>
             </div>
             
             <div class="settings">
                 <button id="settingsBtn" aria-label="Settings">
-                    <svg class="icon"><!-- SVG icon --></svg>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                    </svg>
                 </button>
                 <button id="infoBtn" aria-label="Information">
-                    <svg class="icon"><!-- SVG icon --></svg>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M13,17h-2v-6h2V17z M13,9h-2V7h2V9z"/>
+                    </svg>
                 </button>
                 <button id="audioToggle" aria-label="Toggle Audio">
-                    <svg class="icon"><!-- SVG icon --></svg>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M3,9v6h4l5,5V4L7,9H3z M16.5,12c0-1.77-1.02-3.29-2.5-4.03v8.05C15.48,15.29,16.5,13.77,16.5,12z M14,3.23v2.06 c2.89,0.86,5,3.54,5,6.71s-2.11,5.85-5,6.71v2.06c4.01-0.91,7-4.49,7-8.77S18.01,4.14,14,3.23z"/>
+                    </svg>
                 </button>
             </div>
+        </div>
+    </div>
+    
+    <!-- Text Input Overlay -->
+    <div id="textInputOverlay" class="text-input-overlay">
+        <div class="text-input-container">
+            <input type="text" id="cosmicText" placeholder="Type your cosmic text..." maxlength="30">
+            <p class="text-hint">Press Enter to create • Esc to cancel</p>
         </div>
     </div>
     
@@ -39,7 +54,22 @@
     </div>
     
     <div id="infoModal" class="modal">
-        <!-- Info content -->
+        <div class="modal-content">
+            <h2>Celestial Harmony</h2>
+            <p>Create your own cosmic artwork with Celestial Harmony. Combine constellations, cosmic paint, nebula flows, and text to craft unique celestial scenes.</p>
+            
+            <h3>Tools</h3>
+            <ul>
+                <li><strong>Constellation:</strong> Connect stars to create your own constellations</li>
+                <li><strong>Cosmic Paint:</strong> Paint with cosmic particles</li>
+                <li><strong>Nebula Flow:</strong> Create flowing nebula effects</li>
+                <li><strong>Cosmic Text:</strong> Add sparkling text to your creation</li>
+                <li><strong>Clear All:</strong> Reset your canvas</li>
+            </ul>
+            
+            <p>Your creation is automatically saved to your browser's local storage.</p>
+            <p>Created on: 2025-04-17</p>
+        </div>
     </div>
     
     <!-- Scripts -->
@@ -53,6 +83,7 @@
     <script src="js/particles.js"></script>
     <script src="js/painter.js"></script>
     <script src="js/flow.js"></script>
+    <script src="js/text-renderer.js"></script>
     <script src="js/ui/controls.js"></script>
     <script src="js/ui/modal.js"></script>
     <script src="js/main.js"></script>

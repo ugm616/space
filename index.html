@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestial Harmony</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="container">
+        <canvas id="celestialCanvas"></canvas>
+        
+        <div class="ui-controls">
+            <div class="tool-selector">
+                <button class="tool-btn active" data-tool="constellation">Constellation</button>
+                <button class="tool-btn" data-tool="painter">Cosmic Paint</button>
+                <button class="tool-btn" data-tool="flow">Nebula Flow</button>
+                <button class="tool-btn clear-btn" data-tool="clear">Clear All</button>
+            </div>
+            
+            <div class="settings">
+                <button id="settingsBtn" aria-label="Settings">
+                    <svg class="icon"><!-- SVG icon --></svg>
+                </button>
+                <button id="infoBtn" aria-label="Information">
+                    <svg class="icon"><!-- SVG icon --></svg>
+                </button>
+                <button id="audioToggle" aria-label="Toggle Audio">
+                    <svg class="icon"><!-- SVG icon --></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="settingsModal" class="modal">
+        <!-- Settings content -->
+    </div>
+    
+    <div id="infoModal" class="modal">
+        <!-- Info content -->
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/utils/math.js"></script>
+    <script src="js/utils/colors.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/stars.js"></script>
+    <script src="js/constellations.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/painter.js"></script>
+    <script src="js/flow.js"></script>
+    <script src="js/ui/controls.js"></script>
+    <script src="js/ui/modal.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

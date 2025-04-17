@@ -1,0 +1,81 @@
+/* Base styles are in main.css */
+
+/* Small Screens (phones) */
+@media (max-width: 600px) {
+  .tool-selector {
+    padding: 3px;
+  }
+  
+  .tool-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .settings button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .ui-controls {
+    bottom: 10px;
+  }
+}
+
+/* Medium Screens (tablets) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .ui-controls {
+    bottom: 15px;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .ui-controls {
+    bottom: 5px;
+  }
+  
+  .tool-selector {
+    flex-direction: row;
+  }
+}
+
+/* Ensure UI is accessible on very small screens */
+@media (max-width: 350px) {
+  .settings {
+    position: static;
+    margin-top: 10px;
+    justify-content: center;
+  }
+  
+  .ui-controls {
+    flex-direction: column;
+  }
+}
+
+/* High-DPI screens */
+@media (min-resolution: 192dpi) {
+  .tool-btn {
+    font-weight: 300; /* Thinner fonts look better on high-DPI */
+  }
+}
+
+/* Adjust clear button on smaller screens */
+@media (max-width: 600px) {
+  .tool-btn.clear-btn {
+    margin-left: 5px;
+    font-size: 11px;
+  }
+}
+
+/* For very small screens, stack the clear button */
+@media (max-width: 380px) {
+  .tool-selector {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .tool-btn.clear-btn {
+    margin-top: 5px;
+    margin-left: 0;
+  }
+}

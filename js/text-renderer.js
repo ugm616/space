@@ -173,8 +173,8 @@ class CosmicTextRenderer {
         velocityY: velY,
         size: 1 + Math.random() * 2,
         color: this.textColor,
-        life: 10 + Math.random() * 15, // Longer life for text
-        decay: 0.001 + Math.random() * 0.002, // Slower decay
+        life: 10 + Math.random() * 7, // Longer life for text
+        decay: 0.001 + Math.random() * 0.01, // Slower decay
         type: 'text',
         group: textId
       }

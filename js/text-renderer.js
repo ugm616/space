@@ -8,6 +8,11 @@ class CosmicTextRenderer {
     this.textOverlay = document.getElementById('textInputOverlay');
     this.textColor = this.generateTextColor();
     this.texts = []; // Store all rendered texts
+    this.dispersionFactor = 0.25; // Controls dispersion strength
+    
+    // Current date timestamp and user info
+    this.createdAt = "2025-04-17 14:33:25";
+    this.userInfo = "ugm616";
     
     this.setupEventListeners();
   }
@@ -57,19 +62,26 @@ class CosmicTextRenderer {
     this.hideTextInput();
     
     // Calculate the appropriate font size based on canvas width
-    // and text length to ensure responsive design
-    const baseFontSize = Math.min(this.canvas.width / 20, 80);
-    const fontSize = Math.max(baseFontSize * (1 - text.length * 0.02), baseFontSize * 0.4);
+    // and text length to ensure it takes 95% of screen width
+    const canvasWidth = this.canvas.width / this.ctx.getTransform().a; // Account for any scaling
+    const targetWidth = canvasWidth * 0.95; // 95% of screen width
     
-    // Set font for measurement
+    // Start with a base size and adjust
+    let fontSize = 120; // Start larger than needed
     this.ctx.font = `bold ${fontSize}px Arial, sans-serif`;
-    const textMetrics = this.ctx.measureText(text);
-    const textWidth = textMetrics.width;
+    let textMetrics = this.ctx.measureText(text);
+    
+    // Adjust fontSize until the text width is close to target width
+    while (textMetrics.width > targetWidth && fontSize > 10) {
+      fontSize -= 5;
+      this.ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+      textMetrics = this.ctx.measureText(text);
+    }
     
     // Calculate text position (centered)
-    const centerX = this.canvas.width / 2;
-    const centerY = this.canvas.height / 2;
-    const textX = centerX - textWidth / 2;
+    const centerX = canvasWidth / 2;
+    const centerY = this.canvas.height / (2 * this.ctx.getTransform().d); // Account for any scaling
+    const textX = centerX - textMetrics.width / 2;
     const textY = centerY;
     
     // Store the text properties
@@ -80,7 +92,8 @@ class CosmicTextRenderer {
       x: textX,
       y: textY,
       fontSize,
-      color: this.textColor
+      color: this.textColor,
+      createdAt: new Date().toISOString()
     });
     
     // Create a temporary canvas to draw the text and extract pixel data
@@ -88,21 +101,21 @@ class CosmicTextRenderer {
     const tempCtx = tempCanvas.getContext('2d');
     
     // Size the temp canvas to fit the text
-    tempCanvas.width = textWidth * 1.2;
+    tempCanvas.width = textMetrics.width * 1.2;
     tempCanvas.height = fontSize * 2;
     
     // Draw the text on the temp canvas
     tempCtx.font = `bold ${fontSize}px Arial, sans-serif`;
     tempCtx.fillStyle = 'white';
     tempCtx.textBaseline = 'middle';
-    tempCtx.fillText(text, tempCanvas.width / 2 - textWidth / 2, tempCanvas.height / 2);
+    tempCtx.fillText(text, tempCanvas.width / 2 - textMetrics.width / 2, tempCanvas.height / 2);
     
     // Get the pixel data
     const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
     const pixels = imageData.data;
     
     // Create particles for non-transparent pixels
-    const stepSize = 1 + Math.floor(fontSize / 20); // Adjust density
+    const stepSize = 1 + Math.floor(fontSize / 40); // Adjust density based on font size
     for (let y = 0; y < tempCanvas.height; y += stepSize) {
       for (let x = 0; x < tempCanvas.width; x += stepSize) {
         const i = (y * tempCanvas.width + x) * 4;
@@ -110,35 +123,58 @@ class CosmicTextRenderer {
         // If pixel is not transparent
         if (pixels[i + 3] > 50) {
           // Calculate actual position on main canvas
-          const posX = textX + x - tempCanvas.width / 2 + textWidth / 2;
+          const posX = textX + x - tempCanvas.width / 2 + textMetrics.width / 2;
           const posY = textY + y - tempCanvas.height / 2;
           
-          // Create particle
-          this.createTextParticle(posX, posY, textId);
+          // Create particle with dispersion effect
+          this.createDispersiveTextParticle(posX, posY, textId, x, y, tempCanvas.width, tempCanvas.height);
         }
       }
     }
     
     // Generate a new color for the next text
     this.textColor = this.generateTextColor();
+    
+    // Play a sound effect if audio engine is available
+    if (window.audioEngine && window.audioEngine.enabled) {
+      // Play a gentle chime-like sound
+      window.audioEngine.playTone('text-created', 800 + Math.random() * 400, 0.2, 0.7, 'sine');
+      setTimeout(() => {
+        window.audioEngine.playTone('text-created-2', 1200 + Math.random() * 400, 0.1, 0.5, 'sine');
+      }, 150);
+    }
   }
   
-  createTextParticle(x, y, textId) {
-    // Add a small random offset for more organic look
+  createDispersiveTextParticle(x, y, textId, textX, textY, textWidth, textHeight) {
+    // Calculate position relative to text center (from -0.5 to 0.5)
+    const relX = (textX / textWidth) - 0.5;
+    const relY = (textY / textHeight) - 0.5;
+    
+    // Create dispersion velocity based on position from center
+    // Particles further from center disperse more
+    const distance = Math.sqrt(relX * relX + relY * relY);
+    const angle = Math.atan2(relY, relX) + (Math.random() - 0.5) * 0.5; // Add some angle randomness
+    
+    // Base velocity plus dispersion
+    const dispersionStrength = this.dispersionFactor * distance * (0.5 + Math.random() * 0.5);
+    const velX = Math.cos(angle) * dispersionStrength;
+    const velY = Math.sin(angle) * dispersionStrength;
+    
+    // Add small random offset for more organic look
     const offsetX = (Math.random() - 0.5) * 2;
     const offsetY = (Math.random() - 0.5) * 2;
     
-    // Create particle with minimal motion
+    // Create particle with dispersion motion
     this.particleSystem.createParticle(
       x + offsetX,
       y + offsetY,
       {
-        velocityX: (Math.random() - 0.5) * 0.2,
-        velocityY: (Math.random() - 0.5) * 0.2,
+        velocityX: velX,
+        velocityY: velY,
         size: 1 + Math.random() * 2,
         color: this.textColor,
-        life: 10 + Math.random() * 10, // Longer life for text
-        decay: 0.002 + Math.random() * 0.001, // Slower decay
+        life: 10 + Math.random() * 15, // Longer life for text
+        decay: 0.001 + Math.random() * 0.002, // Slower decay
         type: 'text',
         group: textId
       }
@@ -156,7 +192,7 @@ class CosmicTextRenderer {
   }
   
   update(deltaTime) {
-    // If needed, add any text particle-specific updates here
+    // Any text particle-specific updates could go here
   }
   
   draw() {
@@ -206,8 +242,8 @@ class CosmicTextRenderer {
       const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
       const pixels = imageData.data;
       
-      // Create particles at a lower density
-      const stepSize = 2 + Math.floor(textData.fontSize / 15);
+      // Create particles at a lower density for loaded texts
+      const stepSize = 2 + Math.floor(textData.fontSize / 20);
       for (let y = 0; y < tempCanvas.height; y += stepSize) {
         for (let x = 0; x < tempCanvas.width; x += stepSize) {
           const i = (y * tempCanvas.width + x) * 4;
@@ -219,8 +255,11 @@ class CosmicTextRenderer {
             const posY = textData.y + y - tempCanvas.height / 2;
             
             // Add some randomness to have fewer particles when loading
-            if (Math.random() < 0.7) {
-              this.createTextParticle(posX, posY, textData.id);
+            if (Math.random() < 0.5) {
+              this.createDispersiveTextParticle(
+                posX, posY, textData.id, 
+                x, y, tempCanvas.width, tempCanvas.height
+              );
             }
           }
         }
